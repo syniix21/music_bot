@@ -56,7 +56,7 @@ class music_cog(commands.Cog):
 
                 #in case we fail to connect
                 if self.vc == None:
-                    await ctx.send("Could not connect to the voice channel")
+                    await ctx.send("Es konnte keine Verbindung zum Sprachkanal hergestellt werden")
                     return
             else:
                 await self.vc.move_to(self.music_queue[0][1])
@@ -68,28 +68,28 @@ class music_cog(commands.Cog):
         else:
             self.is_playing = False
 
-    @commands.command(name="play", aliases=["p","playing"], help="Plays a selected song from youtube")
+    @commands.command(name="play", aliases=["p","playing"], help="Spielt einen ausgewählten Song von YouTube ab")
     async def play(self, ctx, *args):
         query = " ".join(args)
         
         voice_channel = ctx.author.voice.channel
         if voice_channel is None:
             #you need to be connected so that the bot knows where to go
-            await ctx.send("Connect to a voice channel!")
+            await ctx.send("Verbinden Sie sich mit einem Sprachkanal!")
         elif self.is_paused:
             self.vc.resume()
         else:
             song = self.search_yt(query)
             if type(song) == type(True):
-                await ctx.send("Could not download the song. Incorrect format try another keyword. This could be due to playlist or a livestream format.")
+                await ctx.send("Das Lied konnte nicht heruntergeladen werden.  Falsches Format, versuchen Sie es mit einem anderen Schlüsselwort.  Dies kann an einer Playlist oder einem Livestream-Format liegen.")
             else:
-                await ctx.send("Song added to the queue")
+                await ctx.send("Lied zur Warteschlange hinzugefügt")
                 self.music_queue.append([song, voice_channel])
                 
                 if self.is_playing == False:
                     await self.play_music(ctx)
 
-    @commands.command(name="pause", help="Pauses the current song being played")
+    @commands.command(name="pause", help="Pausiert das aktuell wiedergegebene Lied")
     async def pause(self, ctx, *args):
         if self.is_playing:
             self.is_playing = False
@@ -98,12 +98,12 @@ class music_cog(commands.Cog):
         elif self.is_paused:
             self.vc.resume()
 
-    @commands.command(name = "resume", aliases=["r"], help="Resumes playing with the discord bot")
+    @commands.command(name = "resume", aliases=["r"], help="Setzt das Spiel mit dem Discord-Bot fort")
     async def resume(self, ctx, *args):
         if self.is_paused:
             self.vc.resume()
 
-    @commands.command(name="skip", aliases=["s"], help="Skips the current song being played")
+    @commands.command(name="skip", aliases=["s"], help="Überspringt den aktuell wiedergegebenen Song")
     async def skip(self, ctx):
         if self.vc != None and self.vc:
             self.vc.stop()
@@ -111,7 +111,7 @@ class music_cog(commands.Cog):
             await self.play_music(ctx)
 
 
-    @commands.command(name="queue", aliases=["q"], help="Displays the current songs in queue")
+    @commands.command(name="queue", aliases=["q"], help="Zeigt die aktuellen Songs in der Warteschlange an")
     async def queue(self, ctx):
         retval = ""
         for i in range(0, len(self.music_queue)):
@@ -124,14 +124,14 @@ class music_cog(commands.Cog):
         else:
             await ctx.send("No music in queue")
 
-    @commands.command(name="clear", aliases=["c", "bin"], help="Stops the music and clears the queue")
+    @commands.command(name="clear", aliases=["c", "bin"], help="Stoppt die Musik und löscht die Warteschlange")
     async def clear(self, ctx):
         if self.vc != None and self.is_playing:
             self.vc.stop()
         self.music_queue = []
         await ctx.send("Music queue cleared")
 
-    @commands.command(name="leave", aliases=["disconnect", "l", "d"], help="Kick the bot from VC")
+    @commands.command(name="leave", aliases=["disconnect", "l", "d"], help="Kickt den Bot von Talk")
     async def dc(self, ctx):
         self.is_playing = False
         self.is_paused = False
